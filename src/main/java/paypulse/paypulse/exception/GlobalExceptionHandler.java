@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
     }
 
     private ResponseEntity<ErrorResponseDto> buildErrorResponse(HttpStatus status,String error, String message){
-        ErrorResponseDto response = new ErrorResponseDto((status.value(), error, message, Instant.now()));
+        ErrorResponseDto response = new ErrorResponseDto(status.value(), error, message, Instant.now());
         return new ResponseEntity<>(response,status);
     }
 }

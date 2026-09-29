@@ -1,13 +1,17 @@
 package paypulse.paypulse.model;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 
 @Entity
 @Table(name = "ledger_entries")
-
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class LedgerEntry {
     @Id

@@ -1,13 +1,12 @@
 package paypulse.paypulse.service;
 
 
-import jakarta.persistence.Table;
-import org.hibernate.Internal;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import paypulse.paypulse.dto.TransferResponceDto;
+import paypulse.paypulse.dto.TransferRequestDto;
 import paypulse.paypulse.model.Wallet;
 import paypulse.paypulse.repository.TransactionRecordRepository;
 import paypulse.paypulse.repository.WalletRepository;
@@ -17,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(properties = {
         "spring.datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
@@ -63,7 +64,7 @@ public class WalletServiceConcurrencyTest {
     @Test
     void testConcurrentTransfersDoesNotCorruptBalance() throws InterruptedException, ExecutionException{
         int threadCount = 20;
-        ExecutorService executorService = Executors.newFixedTreadPool(threadCount);
+        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
         CountDownLatch latch = new CountDownLatch(1);
         List<Future<Exception>> futures = new ArrayList<>();
 
@@ -71,8 +72,10 @@ public class WalletServiceConcurrencyTest {
             futures.add(executorService.submit(() -> {
                 try{
                     latch.await();
-                    TransferResponceDto request = new TransferResponceDto(
-                            walletAId, walletBId, new BigDecimal("5.00"));
+                    TransferRequestDto request = new TransferRequestDto(
+                            walletAId, walletBId, new BigDecimal("5.00")
+                    );
+
                     walletService.transfer(UUID.randomUUID().toString(), request);
                     return null;
                 } catch (Exception e){

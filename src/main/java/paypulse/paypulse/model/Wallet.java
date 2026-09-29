@@ -1,6 +1,7 @@
 package paypulse.paypulse.model;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.math.BigDecimal;
 
@@ -8,7 +9,7 @@ import java.math.BigDecimal;
 @Table(name = "wallets")
 @Getter
 @Setter
-@NoArgsContructor
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Wallet {

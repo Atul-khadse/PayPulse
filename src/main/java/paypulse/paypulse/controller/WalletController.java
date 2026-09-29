@@ -2,6 +2,7 @@ package paypulse.paypulse.controller;
 
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,13 +14,13 @@ import paypulse.paypulse.service.WalletService;
 
 @RestController
 @RequestMapping("/api/vi/wallets")
-@RequiredArr
+@RequiredArgsConstructor
 public class WalletController {
     private final WalletService walletService;
 
     @GetMapping("/{id}")
     public ResponseEntity<WalletResponseDto> getWallet(@PathVariable Long id){
-        return ResponseEntity.ok(walletService.getWallet());
+        return ResponseEntity.ok(walletService.getWallet(id));
     }
 
     @PostMapping("/transfer")

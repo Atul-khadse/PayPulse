@@ -1,6 +1,8 @@
 package paypulse.paypulse.service;
 
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import paypulse.paypulse.dto.TransferRequestDto;
@@ -14,12 +16,17 @@ import paypulse.paypulse.repository.TransactionRecordRepository;
 import paypulse.paypulse.repository.WalletRepository;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class WalletService {
     private final WalletRepository walletRepository;
     private final TransactionRecordRepository transactionRepository;
     private final LedgerEntryRepository ledgerEntryRepository;
+
 
     @Transactional
     public WalletResponseDto getWallet(Long id){
@@ -34,7 +41,7 @@ public class WalletService {
         Optional<TransationRecord> existingTx = transactionRepository.findByIdempotencyKey(idempotencyKey);
         if(existingTx.isPresent()){
             log.info("Indempotent request detet. returnign cached result for key: {}", idempotencyKey);
-            return mapTopResponse(existingTx.get());
+            return mapToResponse(existingTx.get());
 
         }
 
@@ -63,15 +70,15 @@ public class WalletService {
 
         }
 
-        fromWallet.setBalance(fromWallet.getBalance().substract(request.amount()));
+        fromWallet.setBalance(fromWallet.getBalance().subtract(request.amount()));
         toWallet.setBalance(toWallet.getBalance().add(request.amount()));
 
         Instant now = Instant.now();
         TransationRecord txRecord = TransationRecord.builder()
                 .idempotencyKey(idempotencyKey)
-                .fromWalletId(fromWallet.getId())
-                .toWalletId(toWallet.getId())
-                .amout(request.amount())
+                .fromwalletId(fromWallet.getId())
+                .towalletId(toWallet.getId())
+                .amount(request.amount())
                 .status(TransactionStatus.COMPLETED)
                 .createdAt(now)
                 .build();
@@ -79,10 +86,10 @@ public class WalletService {
 
         LedgerEntry debitEntry = LedgerEntry.builder()
                 .walletId(fromWallet.getId())
-                .transation(txRecord)
+                .transaction(txRecord)
                 .amount(request.amount())
                 .type(LedgerEntryType.DEBIT)
-                .createdAt(now)
+                .createAt(now)
                 .build();
 
         LedgerEntry creditEntry = LedgerEntry.builder()
@@ -90,7 +97,7 @@ public class WalletService {
                 .transaction(txRecord)
                 .amount(request.amount())
                 .type(LedgerEntryType.CREDIT)
-                .createdAt(now)
+                .createAt(now)
                 .build();
 
 
@@ -104,10 +111,10 @@ public class WalletService {
         return new TransferResponceDto(
                 tx.getId().toString(),
                 tx.getStatus().name(),
-                tx.getFromWalletId(),
-                tx.getToWalletId(),
+                tx.getFromwalletId(),
+                tx.getTowalletId(),
                 tx.getAmount(),
-                tx.getCreateAt()
+                tx.getCreatedAt()
         );
 
     }

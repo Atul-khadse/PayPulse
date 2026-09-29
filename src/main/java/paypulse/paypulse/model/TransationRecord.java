@@ -2,13 +2,17 @@ package paypulse.paypulse.model;
 
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 
 @Entity
 @Table(name = "transaction_record")
-
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class TransationRecord {
 
