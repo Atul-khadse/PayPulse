@@ -89,7 +89,7 @@ public class WalletServiceConcurrencyTest {
         for(Future<Exception> future : futures){
             Exception exception = future.get();
             if(exception != null){
-                System.out.println("Thread threw exception: " + exception.getMessage());
+                System.out.println("hello ji Thread threw exception: " + exception.getMessage());
             }
         }
 
@@ -99,8 +99,13 @@ public class WalletServiceConcurrencyTest {
         Wallet finalWalletA = walletRepository.findById(walletAId).orElseThrow();
         Wallet finalWalletB = walletRepository.findById(walletBId).orElseThrow();
 
-        assertEquals(new BigDecimal("0.00"), finalWalletA.getBalance().stripTrailingZeros());
-        assertEquals(new BigDecimal("150.00"), finalWalletB.getBalance().stripTrailingZeros());
+//        assertEquals(new BigDecimal("0.00"), finalWalletA.getBalance().stripTrailingZeros());
+//        assertEquals(new BigDecimal("150.00"), finalWalletB.getBalance().stripTrailingZeros());
+
+        assertEquals(0, finalWalletA.getBalance().compareTo(new BigDecimal("0.00")));
+        assertEquals(0, finalWalletB.getBalance().compareTo(new BigDecimal("150.00")));
+
+
     }
 
     
